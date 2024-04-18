@@ -42,18 +42,32 @@ def get_cds(ric_cds, start="2012-01-01", end="2023-06-30"):
                                      fields="*",
                                      start_date=start,
                                      end_date=end)
-            temp.index.name = "DATE"
+            temp.index.name = "date"
             temp.reset_index(inplace=True)
-            temp = temp[["DATE", "CLOSE"]]
-            temp.loc[:, "RIC"] = cds
+            temp = temp[["date", "CLOSE"]]
+            temp = temp.rename(columns={"CLOSE": "value"})
+            temp.loc[:, "ric"] = cds
             data.append(temp)
         except:
             temp = pd.DataFrame({
-                "DATE": [start],
-                "CLOSE": [None],
-                "RIC": [cds]
+                "date": [start],
+                "value": [pd.NA],
+                "ric": [cds]
             })
             data.append(temp)
     return pd.concat(data)
+
+def get_price_to_book(ric_equity, number_of_days = -365*4):
+
+    df, err = ek.get_data(ric_equity,
+                          ["TR.H.PriceToBVPerShare.date", "TR.H.PriceToBVPerShare"],
+                          {"SDate": 0, "EDate": number_of_days, "FRQ": "D"})
+    
+    df = pd.DataFrame(df)
+    df.columns = ["ric", "date", "value"]
+    df = df.replace("NaN", pd.NA)
+    return df
+
+
 
 
