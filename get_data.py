@@ -28,18 +28,16 @@ def ric_equity(banks_meta):
 
     return ric_list
 
-def ric_cds(ric_equity, as_data_frame = False):
+def ric_cds(ric_equity):
     ric_cds, error = ek.get_data(ric_equity, "TR.CDSPrimaryCDSRic")
-    if as_data_frame: return ric_cds
-    ric_cds = ric_cds["Primary CDS RIC"].to_list()
-    ric_cds = [x for x in ric_cds if x != ""]
+    ric_cds = ric_cds.rename(columns={"Instrument": "ric_equity", "Primary CDS RIC": "ric_cds"})
     return ric_cds
 
 def get_cds(ric_cds, start="2012-01-01", end="2023-06-30"):
     data = []
-    for cds in ric_cds:
+    for cds in ric_cds.itertuples():
         try:
-            temp = ek.get_timeseries(cds,
+            temp = ek.get_timeseries(cds.ric_cds,
                                      fields="*",
                                      start_date=start,
                                      end_date=end)
@@ -47,13 +45,15 @@ def get_cds(ric_cds, start="2012-01-01", end="2023-06-30"):
             temp.reset_index(inplace=True)
             temp = temp[["date", "CLOSE"]]
             temp = temp.rename(columns={"CLOSE": "value"})
-            temp.loc[:, "ric"] = cds
+            temp.loc[:, "ric_cds"] = cds.ric_cds
+            temp.loc[:, "ric_equity"] = cds.ric_equity
             data.append(temp)
         except:
             temp = pd.DataFrame({
                 "date": [start],
                 "value": [pd.NA],
-                "ric": [cds]
+                "ric_cds": [cds.ric_cds],
+                "ric_equity": [cds.ric_equity]
             })
             data.append(temp)
     return pd.concat(data)
