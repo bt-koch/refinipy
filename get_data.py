@@ -28,8 +28,9 @@ def ric_equity(banks_meta):
 
     return ric_list
 
-def ric_cds(ric_equity):
+def ric_cds(ric_equity, as_data_frame = False):
     ric_cds, error = ek.get_data(ric_equity, "TR.CDSPrimaryCDSRic")
+    if as_data_frame: return ric_cds
     ric_cds = ric_cds["Primary CDS RIC"].to_list()
     ric_cds = [x for x in ric_cds if x != ""]
     return ric_cds
