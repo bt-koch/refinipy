@@ -65,7 +65,7 @@ def get_price_to_book(ric_equity, number_of_days = -365*4):
                           {"SDate": 0, "EDate": number_of_days, "FRQ": "D"})
     
     df = pd.DataFrame(df)
-    df.columns = ["ric", "date", "value"]
+    df.columns = ["ric_equity", "date", "value"]
     df = df.replace("NaN", pd.NA)
     return df
 
