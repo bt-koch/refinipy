@@ -2,6 +2,7 @@ import json
 import requests
 import eikon as ek
 import pandas as pd
+import utils
 
 def test2():
     print("test2 asdf")
@@ -56,7 +57,7 @@ def get_cds(ric_cds, start="2012-01-01", end="2023-06-30"):
                 "ric_equity": [cds.ric_equity]
             })
             data.append(temp)
-    return pd.concat(data)
+    return utils.format_dataframe(pd.concat(data))
 
 def get_price_to_book(ric_equity, number_of_days = -365*4):
 
@@ -67,7 +68,7 @@ def get_price_to_book(ric_equity, number_of_days = -365*4):
     df = pd.DataFrame(df)
     df.columns = ["ric_equity", "date", "value"]
     df = df.replace("NaN", pd.NA)
-    return df
+    return utils.format_dataframe(df)
 
 
 
