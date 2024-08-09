@@ -70,6 +70,16 @@ def get_price_to_book(ric_equity, number_of_days = -365*4):
     df = df.replace("NaN", pd.NA)
     return utils.format_dataframe(df)
 
+def get_stockprice(ric_equity, start="2021-01-01", end="2024-06-30"):
+
+    df = ek.get_data(ric_equity,
+                     ["TR.CLOSEPRICE.Date", "TR.CLOSEPRICE"],
+                     {"SDate": start, "EDate": end})
+    df = pd.DataFrame(df[0])
+    df.columns = ["ric_equity", "date", "value"]
+    df = df.replace("NaN", pd.NA)
+    return utils.format_dataframe(df)
+
 
 
 
